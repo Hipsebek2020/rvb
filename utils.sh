@@ -553,13 +553,7 @@ build_rv() {
 		return 0
 	fi
 
-	if [ "$mode_arg" = module ]; then
-		build_mode_arr=(module)
-	elif [ "$mode_arg" = apk ]; then
-		build_mode_arr=(apk)
-	elif [ "$mode_arg" = both ]; then
-		build_mode_arr=(apk module)
-	fi
+	build_mode_arr=(apk)
 
 	pr "Choosing version '${version}' for ${table}"
 	local version_f=${version// /}

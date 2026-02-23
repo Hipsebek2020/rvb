@@ -225,9 +225,9 @@ jobs:
 
             # Inject mode-specific global settings BEFORE patch toggling:
             if [ "$mode" = "stable" ]; then
-              # Stable: magisk update enabled
+              # Stable: magisk update disabled
               {
-                echo 'enable-magisk-update = true'
+                echo 'enable-magisk-update = false'
                 cat "$out_file"
               } > tmp_header
               mv tmp_header "$out_file"
@@ -405,39 +405,12 @@ jobs:
           prerelease: true
           overwrite: true
 
-      - name: Update Changelog and Magisk Update JSON (Dev)
-        run: |
-          set -euo pipefail
-          git checkout -f update || git switch --discard-changes --orphan update
-          cp -f build.tmp build.md
-          get_update_json() {
-            echo "{
-            \"version\": \"$1\",
-            \"versionCode\": ${{ needs.check-patch.outputs.next_dev_ver }},
-            \"zipUrl\": \"$2\",
-            \"changelog\": \"https://raw.githubusercontent.com/$GITHUB_REPOSITORY/update/build.md\"
-          }"
-          }
-          cd build || { echo "build folder not found"; exit 1; }
-          for OUTPUT in *magisk*.zip; do
-            [ "$OUTPUT" = "*magisk*.zip" ] && continue
-            ZIP_S=$(unzip -p "$OUTPUT" module.prop)
-            if ! UPDATE_JSON=$(echo "$ZIP_S" | grep updateJson); then continue; fi
-            UPDATE_JSON="${UPDATE_JSON##*/}"
-            VER=$(echo "$ZIP_S" | grep version=)
-            VER="${VER##*=}"
-            DLURL="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/releases/download/${{ needs.check-patch.outputs.next_dev_ver }}/${OUTPUT}"
-            get_update_json "$VER" "$DLURL" >"../$UPDATE_JSON"
-          done
-          cd ..
-          find . -name "*-update.json" | grep . || : >dummy-update.json
-
-      - name: Commit Updated Build MD and Update JSON Files (Dev)
+      - name: Commit Updated Build MD (Dev)
         uses: stefanzweifel/git-auto-commit-action@v7
         with:
           branch: update
           skip_checkout: true
-          file_pattern: build.md *-update.json
+          file_pattern: build.md
           commit_message: Bump version ${{ needs.check-patch.outputs.next_dev_ver }}
 
   build-stable:
@@ -492,39 +465,12 @@ jobs:
           tag: ${{ needs.check-patch.outputs.next_stable_ver }}
           overwrite: true
 
-      - name: Update Changelog and Magisk Update JSON (Stable)
-        run: |
-          set -euo pipefail
-          git checkout -f update || git switch --discard-changes --orphan update
-          cp -f build.tmp build.md
-          get_update_json() {
-            echo "{
-            \"version\": \"$1\",
-            \"versionCode\": ${{ needs.check-patch.outputs.next_stable_ver }},
-            \"zipUrl\": \"$2\",
-            \"changelog\": \"https://raw.githubusercontent.com/$GITHUB_REPOSITORY/update/build.md\"
-          }"
-          }
-          cd build || { echo "build folder not found"; exit 1; }
-          for OUTPUT in *magisk*.zip; do
-            [ "$OUTPUT" = "*magisk*.zip" ] && continue
-            ZIP_S=$(unzip -p "$OUTPUT" module.prop)
-            if ! UPDATE_JSON=$(echo "$ZIP_S" | grep updateJson); then continue; fi
-            UPDATE_JSON="${UPDATE_JSON##*/}"
-            VER=$(echo "$ZIP_S" | grep version=)
-            VER="${VER##*=}"
-            DLURL="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/releases/download/${{ needs.check-patch.outputs.next_stable_ver }}/${OUTPUT}"
-            get_update_json "$VER" "$DLURL" >"../$UPDATE_JSON"
-          done
-          cd ..
-          find . -name "*-update.json" | grep . || : >dummy-update.json
-
-      - name: Commit Updated Build MD and Update JSON Files (Stable)
+      - name: Commit Updated Build MD (Stable)
         uses: stefanzweifel/git-auto-commit-action@v7
         with:
           branch: update
           skip_checkout: true
-          file_pattern: build.md *-update.json
+          file_pattern: build.md
           commit_message: Bump version ${{ needs.check-patch.outputs.next_stable_ver }}
 
   cleanup:
