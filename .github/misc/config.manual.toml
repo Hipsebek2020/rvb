@@ -1,5 +1,5 @@
 parallel-jobs = 1
-patches-version = "dev"
+patches-version = "latest"
 enable-magisk-update = false
 remove-rv-integrations-checks = true
 
@@ -28,9 +28,9 @@ patcher-args = "-e 'Dark theme' -OdarkThemeBackgroundColor=#2E3440 -OmaterialYou
 uptodown-dlurl = "https://youtube-music.en.uptodown.com/android"
 apkmirror-dlurl = "https://apkmirror.com/apk/google-inc/youtube-music"
 archive-dlurl = "https://archive.org/download/geologically/apks/com.google.android.apps.youtube.music"
-
+config.manual.toml repair
 [youtube-anddea-mocha]
-enabled = false
+enabled = true
 app-name = "youtube"
 rv-brand = "anddea-mocha"
 build-mode = "both"
@@ -92,12 +92,12 @@ apkmirror-dlurl = "https://apkmirror.com/apk/google-inc/youtube"
 # archive-dlurl = "https://archive.org/download/geologically/apks/com.google.android.youtube"
 
 [twitter-piko-materialu]
-enabled = false 
+enabled = true
 app-name = "twitter"
 rv-brand = "piko-materialu"
 arch = "both"
 patches-source = "crimera/piko"
-included-patches = "'Bring back twitter' 'Dynamic color'"
+included-patches = "Dynamic color"
 cli-source = "MorpheApp/morphe-cli"
 uptodown-dlurl = "https://twitter.en.uptodown.com/android"
 dpi = "120-640dpi 480dpi nodpi anydpi"
