@@ -85,7 +85,6 @@ enabled = false
 app-name = "youtube"
 rv-brand = "morphe-exp"
 build-mode = "both"
-version = "latest"
 patches-source = "MorpheApp/morphe-patches"
 cli-source = "MorpheApp/morphe-cli"
 uptodown-dlurl = "https://youtube.en.uptodown.com/android"

@@ -62,7 +62,7 @@ gh_dl "${MODULE_TEMPLATE_DIR}/bin/x64/cmpr" "https://github.com/j-hc/cmpr/releas
 declare -A cliriplib
 idx=0
 for table_name in $(toml_get_table_names); do
-if [[ "$table_name" != "piko" && "$table_name" != "youtube" ]]; then
+	if [[ "$table_name" != *piko* && "$table_name" != *youtube* && "$table_name" != *anddea* && "$table_name" != "dea" ]]; then
   continue
 fi
 	if [ -z "$table_name" ]; then continue; fi
