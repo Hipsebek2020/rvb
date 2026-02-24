@@ -469,7 +469,8 @@ dl_archive() {
 get_archive_resp() {
 	if [[ "$1" == *.apk ]]; then
 		__ARCHIVE_RESP__="${1##*/}"
-		__ARCHIVE_PKG_NAME__="${__ARCHIVE_RESP__%%_*}"
+		local dirpath="${1%/*}"
+		__ARCHIVE_PKG_NAME__="${dirpath##*/}"
 		return 0
 	fi
 	local r
