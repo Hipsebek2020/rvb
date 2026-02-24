@@ -30,7 +30,7 @@ apkmirror-dlurl = "https://apkmirror.com/apk/google-inc/youtube-music"
 archive-dlurl = "https://archive.org/download/geologically/apks/com.google.android.apps.youtube.music"
 [youtube-anddea]
 enabled = true
-app-name = "youtube"
+app-name = "com.google.android.youtube"
 rv-brand = "anddea"
 build-mode = "both"
 patches-source = "inotia00/revanced-patches"
@@ -90,7 +90,7 @@ apkmirror-dlurl = "https://apkmirror.com/apk/google-inc/youtube"
 
 [twitter-piko-materialu]
 enabled = true
-app-name = "twitter"
+app-name = "com.twitter.android"
 rv-brand = "piko-materialu"
 arch = "both"
 patches-source = "crimera/piko"
