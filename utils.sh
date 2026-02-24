@@ -458,17 +458,32 @@ get_uptodown_pkg_name() { $HTMLQ --text "tr.full:nth-child(1) > td:nth-child(3)"
 # -------------------- archive --------------------
 dl_archive() {
 	local url=$1 version=$2 output=$3 arch=$4
+	if [[ "$url" == *.apk ]]; then
+		req "$url" "$output"
+		return $?
+	fi
 	local path version=${version// /}
 	path=$(grep "${version_f#v}-${arch// /}" <<<"$__ARCHIVE_RESP__") || return 1
 	req "${url}/${path}" "$output"
 }
 get_archive_resp() {
+	if [[ "$1" == *.apk ]]; then
+		__ARCHIVE_RESP__="${1##*/}"
+		__ARCHIVE_PKG_NAME__="${__ARCHIVE_RESP__%%_*}"
+		return 0
+	fi
 	local r
 	r=$(req "$1" -)
-	if [ -z "$r" ]; then return 1; else __ARCHIVE_RESP__=$(sed -n 's;^<a href="\(.*\)"[^"]*;\1;p' <<<"$r"); fi
+	if [ -z "$r" ]; then return 1; else __ARCHIVE_RESP__=$(sed -n 's/.*href="\([^"]*\.apk\)".*/\1/p' <<<"$r"); fi
 	__ARCHIVE_PKG_NAME__=$(awk -F/ '{print $NF}' <<<"$1")
 }
-get_archive_vers() { sed 's/^[^-]*-//;s/-\(all\|arm64-v8a\|arm-v7a\)\.apk//g' <<<"$__ARCHIVE_RESP__"; }
+get_archive_vers() {
+	if [[ "$__ARCHIVE_RESP__" == *.apk ]]; then
+		echo "$__ARCHIVE_RESP__" | sed -e 's/^[^-]*_//g' -e 's/^[^-]*-//g' -e 's/-\(all\|arm64-v8a\|arm-v7a\)\.apk//g' -e 's/\.apk//g'
+	else
+		sed 's/^[^-]*-//;s/-\(all\|arm64-v8a\|arm-v7a\)\.apk//g' <<<"$__ARCHIVE_RESP__"
+	fi
+}
 get_archive_pkg_name() { echo "$__ARCHIVE_PKG_NAME__"; }
 # --------------------------------------------------
 
