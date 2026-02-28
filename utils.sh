@@ -119,7 +119,7 @@ get_prebuilts() {
 			if [ $grab_cl = true ]; then echo -e "[Changelog](https://github.com/${src}/releases/tag/${tag_name})\n" >>"${cl_dir}/changelog.md"; fi
 			if [ "$REMOVE_RV_INTEGRATIONS_CHECKS" = true ]; then
 				local extensions_ext
-				extensions_ext=$(unzip -l "${file}" "extensions/shared*" | grep -o "shared.*") extensions_ext="${extensions_ext#*.}"
+				extensions_ext=$(unzip -l "${file}" "extensions/shared.*" | grep -o "shared\..*") extensions_ext="${extensions_ext#*.}"
 				if ! (
 					mkdir -p "${file}-zip" || return 1
 					unzip -qo "${file}" -d "${file}-zip" || return 1
@@ -458,34 +458,27 @@ get_uptodown_pkg_name() { $HTMLQ --text "tr.full:nth-child(1) > td:nth-child(3)"
 # -------------------- archive --------------------
 dl_archive() {
 	local url=$1 version=$2 output=$3 arch=$4
-	if [[ "$url" == *.apk ]]; then
-		req "$url" "$output"
-		return $?
-	fi
 	local path version=${version// /}
 	path=$(grep "${version_f#v}-${arch// /}" <<<"$__ARCHIVE_RESP__") || return 1
 	req "${url}/${path}" "$output"
 }
 get_archive_resp() {
-	if [[ "$1" == *.apk ]]; then
-		__ARCHIVE_RESP__="${1##*/}"
-		local dirpath="${1%/*}"
-		__ARCHIVE_PKG_NAME__="${dirpath##*/}"
-		return 0
-	fi
 	local r
 	r=$(req "$1" -)
-	if [ -z "$r" ]; then return 1; else __ARCHIVE_RESP__=$(sed -n 's/.*href="\([^"]*\.apk\)".*/\1/p' <<<"$r"); fi
+	if [ -z "$r" ]; then return 1; else __ARCHIVE_RESP__=$(sed -n 's;^<a href="\(.*\)"[^"]*;\1;p' <<<"$r"); fi
 	__ARCHIVE_PKG_NAME__=$(awk -F/ '{print $NF}' <<<"$1")
 }
-get_archive_vers() {
-	if [[ "$__ARCHIVE_RESP__" == *.apk ]]; then
-		echo "$__ARCHIVE_RESP__" | sed -e 's/^[^-]*_//g' -e 's/^[^-]*-//g' -e 's/-\(all\|arm64-v8a\|arm-v7a\)\.apk//g' -e 's/\.apk//g'
-	else
-		sed 's/^[^-]*-//;s/-\(all\|arm64-v8a\|arm-v7a\)\.apk//g' <<<"$__ARCHIVE_RESP__"
-	fi
-}
+get_archive_vers() { sed 's/^[^-]*-//;s/-\(all\|arm64-v8a\|arm-v7a\)\.apk//g' <<<"$__ARCHIVE_RESP__"; }
 get_archive_pkg_name() { echo "$__ARCHIVE_PKG_NAME__"; }
+
+# -------------------- direct --------------------
+dl_direct() {
+	local url=$1 version=${2// /-} output=$3 arch=$4 dpi=$5
+	req "$url" "${output}" || return 1
+}
+get_direct_vers() { cut -d- -f2 <<<"$__DIRECT_APKNAME__"; }
+get_direct_pkg_name() { cut -d- -f1 <<<"$__DIRECT_APKNAME__"; }
+get_direct_resp() { __DIRECT_APKNAME__=$(awk -F/ '{print $NF}' <<<"$1"); }
 # --------------------------------------------------
 
 patch_apk() {
@@ -569,7 +562,13 @@ build_rv() {
 		return 0
 	fi
 
-	build_mode_arr=(apk)
+	if [ "$mode_arg" = module ]; then
+		build_mode_arr=(module)
+	elif [ "$mode_arg" = apk ]; then
+		build_mode_arr=(apk)
+	elif [ "$mode_arg" = both ]; then
+		build_mode_arr=(apk module)
+	fi
 
 	pr "Choosing version '${version}' for ${table}"
 	local version_f=${version// /}
