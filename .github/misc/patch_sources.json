@@ -2,12 +2,12 @@
   "revanced": {
     "repo": "ReVanced/revanced-patches",
     "stable": "v6.0.0",
-    "prerelease": "v6.0.0-dev.26"
+    "prerelease": "v6.0.1-dev.1"
   },
   "anddea": {
     "repo": "ReVanced/revanced-patches",
     "stable": "v6.0.0",
-    "prerelease": "v6.0.0-dev.26"
+    "prerelease": "v6.0.1-dev.1"
   },
   "jkennethcarino": {
     "repo": "jkennethcarino/privacy-revanced-patches",
@@ -27,6 +27,6 @@
   "piko": {
     "repo": "crimera/piko",
     "stable": "v2.0.0",
-    "prerelease": "v3.0.0-dev.12"
+    "prerelease": "v3.0.0-dev.13"
   }
 }
