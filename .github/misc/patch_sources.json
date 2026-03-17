@@ -2,12 +2,12 @@
   "revanced": {
     "repo": "ReVanced/revanced-patches",
     "stable": "v6.0.1",
-    "prerelease": "v6.0.2-dev.1"
+    "prerelease": "v6.1.0-dev.1"
   },
   "anddea": {
     "repo": "ReVanced/revanced-patches",
     "stable": "v6.0.1",
-    "prerelease": "v6.0.2-dev.1"
+    "prerelease": "v6.1.0-dev.1"
   },
   "jkennethcarino": {
     "repo": "jkennethcarino/privacy-revanced-patches",
